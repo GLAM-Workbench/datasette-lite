@@ -135,12 +135,8 @@ async function startDatasette(settings) {
             db[bit].insert_all(json_data)
 
     from datasette.app import Datasette
-    from pathlib import Path
-    import os
-    print(os.listdir(os.curdir))
-    print(Path("config").exists())
     ds = Datasette(names, settings={
-        "num_sql_threads": 0,
+        "num_sql_threads": 0, "truncate_cells_html": 100
     }, metadata = {
         "title": "GLAM Workbench Data Explorer"
     }, template_dir="templates")
