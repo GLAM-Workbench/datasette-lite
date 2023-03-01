@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Datasette</title>
-  <link rel="stylesheet" href="https://latest.datasette.io/-/static/app.css?cead5a">
+  <link rel="stylesheet" href="https://glam-workbench.net/stylesheets/datasette-app.css">
 <style>
 #loading-indicator {
   text-align: center;
@@ -35,6 +35,7 @@ textarea#sql-editor {
 </head>
 <body>
 
+<div class="container">
 <div id="loading-indicator">
   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
   width="200px" height="200px" viewBox="0 0 100 100">
@@ -89,6 +90,7 @@ textarea#sql-editor {
 </g>
 </svg>
 <textarea id="loading-logs">Loading...</textarea>
+</div>
 </div>
 
 <script>
@@ -157,16 +159,6 @@ datasetteWorker.onmessage = (event) => {
 </script>
 
 <div id="output"></div>
-
-<form id="load-custom">
-  <p style="padding: 1em">
-    <button type="button" class="db-url">Load SQLite DB by URL</button>
-    <button type="button" class="csv-url">Load CSV</button>
-    <button type="button" class="json-url">Load JSON</button>
-    <button type="button" class="sql-url">Load SQL</button>
-    <a style="text-decoration: none; padding-left: 0.3em; color: #067EFF" href="https://github.com/simonw/datasette-lite">Documentation</a>
-  </p>
-</form>
 
 <script>
 const useAnalytics = location.hostname == "lite.datasette.io";

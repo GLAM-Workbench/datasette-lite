@@ -10,7 +10,7 @@
 @media only screen and (max-width: 576px) {
 {% for column in display_columns -%}
     .rows-and-columns td:nth-of-type({{ loop.index }}):before { content: "{{ column.name|escape_css_string }}"; }
-{% endfor %}}
+{% endfor %}
 </style>
 {% endblock %}
 
@@ -60,7 +60,7 @@
 {% endif %}
 
 {% if filtered_table_rows_count or human_description_en %}
-    <h3 class="subtitle pl-4">{% if filtered_table_rows_count or filtered_table_rows_count == 0 %}{{ "{:,}".format(filtered_table_rows_count) }} row{% if filtered_table_rows_count == 1 %}{% else %}s{% endif %}{% endif %}
+    <h3 class="subtitle pl-4 mb-6">{% if filtered_table_rows_count or filtered_table_rows_count == 0 %}{{ "{:,}".format(filtered_table_rows_count) }} row{% if filtered_table_rows_count == 1 %}{% else %}s{% endif %}{% endif %}
         {% if human_description_en %}{{ human_description_en }}{% endif %}
     </h3>
 {% endif %}
