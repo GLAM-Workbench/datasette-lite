@@ -45,6 +45,9 @@ async function startDatasette(settings) {
   await pyodide.loadPackage('micropip', log);
   await pyodide.loadPackage('ssl', log);
   await pyodide.loadPackage('setuptools', log); // For pkg_resources
+  let zipResponse = await fetch("templates.zip");
+  let zipBinary = await zipResponse.arrayBuffer();
+  pyodide.unpackArchive(zipBinary, "zip");
   try {
     await self.pyodide.runPythonAsync(`
     # Grab that fixtures.db database
@@ -132,12 +135,16 @@ async function startDatasette(settings) {
             db[bit].insert_all(json_data)
 
     from datasette.app import Datasette
+    from pathlib import Path
+    import os
+    print(os.listdir(os.curdir))
+    print(Path("config").exists())
     ds = Datasette(names, settings={
         "num_sql_threads": 0,
     }, metadata = {
-        "about": "Datasette Lite",
+        "about": "GLAM Workbench",
         "about_url": "https://github.com/simonw/datasette-lite"
-    })
+    }, template_dir="templates")
     await ds.invoke_startup()
     `);
     datasetteLiteReady();
