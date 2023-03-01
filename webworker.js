@@ -142,8 +142,7 @@ async function startDatasette(settings) {
     ds = Datasette(names, settings={
         "num_sql_threads": 0,
     }, metadata = {
-        "about": "GLAM Workbench",
-        "about_url": "https://github.com/simonw/datasette-lite"
+        "title": "GLAM Workbench Data Explorer"
     }, template_dir="templates")
     await ds.invoke_startup()
     `);
