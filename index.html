@@ -112,12 +112,15 @@ function fixUrl(url) {
 
 const urlParams = new URLSearchParams(location.search);
 const initialUrl = fixUrl(urlParams.get('url'));
+const memory = !!urlParams.get('memory');
+const metadataUrl = fixUrl(urlParams.get('metadata'));
 const csvUrls = urlParams.getAll('csv').map(fixUrl);
 const sqlUrls = urlParams.getAll('sql').map(fixUrl);
 const jsonUrls = urlParams.getAll('json').map(fixUrl);
+const parquetUrls = urlParams.getAll('parquet').map(fixUrl);
 const installUrls = urlParams.getAll('install');
 
-datasetteWorker.postMessage({type: 'startup', initialUrl, csvUrls, sqlUrls, jsonUrls, installUrls});
+datasetteWorker.postMessage({type: 'startup', initialUrl, memory, csvUrls, sqlUrls, jsonUrls, parquetUrls, installUrls, metadataUrl});
 
 let loadingLogs = ["Loading..."];
 
@@ -161,7 +164,7 @@ datasetteWorker.onmessage = (event) => {
 <div id="output"></div>
 
 <script>
-const useAnalytics = location.hostname == "lite.datasette.io";
+const useAnalytics = (location.hostname == "lite.datasette.io") && (new URLSearchParams(location.search).get('analytics') != 'off');
 useAnalytics && plausible('pageview');
 
 window.onpopstate = function(event) {
@@ -200,7 +203,7 @@ function loadPath(path) {
   path = path.split("#")[0].replace("http://localhost", "");
   console.log({path});
   history.pushState({path: path}, path, "#" + path);
-  useAnalytics && plausible('pageview', {u: location.href.replace('?url=', '').replace('#', '/')});
+  useAnalytics && plausible('pageview', {u: location.href.replace('?', '').replace('#', '/')});
   datasetteWorker.postMessage({path});
 }
 
@@ -256,58 +259,50 @@ async function checkUrl(url, contentTypes) {
   }
 }
 
-document.querySelector('#load-custom button.db-url').addEventListener('click', async function(ev) {
-  ev.preventDefault();
-  let url = fixUrl(prompt("Enter a full URL to a SQLite .db file"));
-  if (!url) {
-    return;
-  }
-  let valid = await checkUrl(url, ["application/octet-stream", "application/x-sqlite3", "application/vnd.sqlite3"]);
-  if (valid) {
-    location.href = location.pathname + '?url=' + encodeURIComponent(url);
-  } else {
-    alert("That database URL could not be loaded");
-  }
+const fileTypes = [
+  {
+    id: "db-url",
+    prompt: "Enter a full URL to a SQLite .db file",
+    param: "url",
+    mimes: [
+      "application/octet-stream",
+      "application/x-sqlite3",
+      "application/vnd.sqlite3",
+    ],
+  },
+  { id: "csv-url", prompt: "Enter a full URL to a CSV file", param: "csv" },
+  { id: "json-url", prompt: "Enter a full URL to a JSON file", param: "json" },
+  {
+    id: "parquet-url",
+    prompt: "Enter a full URL to a Parquet file",
+    param: "parquet",
+  },
+  { id: "sql-url", prompt: "Enter a full URL to a SQL file", param: "sql" },
+];
+
+fileTypes.forEach((fileType) => {
+  document
+    .querySelector(`#load-custom button.${fileType.id}`)
+    .addEventListener("click", async function (ev) {
+      ev.preventDefault();
+      let url = fixUrl(prompt(fileType.prompt));
+      if (!url) {
+        return;
+      }
+      let valid = await checkUrl(url, fileType.mimes);
+      if (valid) {
+        location.href =
+          location.pathname +
+          "?" +
+          fileType.param +
+          "=" +
+          encodeURIComponent(url);
+      } else {
+        alert(`That ${fileType.param.toUpperCase()} could not be loaded`);
+      }
+    });
 });
-document.querySelector('#load-custom button.csv-url').addEventListener('click', async function(ev) {
-  ev.preventDefault();
-  let url = fixUrl(prompt("Enter a full URL to a CSV file"));
-  if (!url) {
-    return;
-  }
-  let valid = await checkUrl(url);
-  if (valid) {
-    location.href = location.pathname + '?csv=' + encodeURIComponent(url);
-  } else {
-    alert("That CSV could not be loaded");
-  }
-});
-document.querySelector('#load-custom button.json-url').addEventListener('click', async function(ev) {
-  ev.preventDefault();
-  let url = fixUrl(prompt("Enter a full URL to a JSON file"));
-  if (!url) {
-    return;
-  }
-  let valid = await checkUrl(url);
-  if (valid) {
-    location.href = location.pathname + '?json=' + encodeURIComponent(url);
-  } else {
-    alert("That JSON could not be loaded");
-  }
-});
-document.querySelector('#load-custom button.sql-url').addEventListener('click', async function(ev) {
-  ev.preventDefault();
-  let url = fixUrl(prompt("Enter a full URL to a SQL file"));
-  if (!url) {
-    return;
-  }
-  let valid = await checkUrl(url);
-  if (valid) {
-    location.href = location.pathname + '?sql=' + encodeURIComponent(url);
-  } else {
-    alert("That SQL could not be loaded");
-  }
-});
+
 </script>
 </body>
 </html>

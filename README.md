@@ -47,7 +47,7 @@ If you have data in a JSON file that looks something like this you can load it d
   }
 ]
 ```
-It also works with JSON documents where one of the keys is a list of objects, such as this one:
+This also works with JSON documents where one of the keys is a list of objects, such as this one:
 ```json
 {
   "rows": [
@@ -64,7 +64,32 @@ It also works with JSON documents where one of the keys is a list of objects, su
 ```
 In this case it will search for the first key that contains a list of objects.
 
+If a document is a JSON object where every value is a JSON object, like this:
+
+```json
+{
+  "anchor-positioning": {
+    "spec": "https://drafts.csswg.org/css-anchor-position-1/#anchoring"
+  },
+  "array-at": {
+    "spec": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.at"
+  },
+  "array-flat": {
+    "caniuse": "array-flat",
+    "spec": "https://tc39.es/ecma262/multipage/indexed-collections.html#sec-array.prototype.flat"
+  }
+}
+```
+Each of those objects will be loaded as a separate row, with a `_key` primary key column containing the object key.
+
 [This example loads scraped data](https://lite.datasette.io/?json=https://github.com/simonw/scrape-san-mateo-fire-dispatch/blob/main/incidents.json#/data/incidents) from [this repo](https://github.com/simonw/scrape-san-mateo-fire-dispatch).
+
+Newline-delimited JSON works too - for example a file that looks like this:
+
+```
+{"id": 1, "name": "Item 1"}
+{"id": 2, "name": "Item 2"}
+```
 
 ## Loading SQLite databases
 
@@ -79,6 +104,18 @@ Some examples to try out:
 - [Global Power Plants](https://lite.datasette.io/?url=https://global-power-plants.datasettes.com/global-power-plants.db) - 33,000 power plants around the world
 - [United States members of congress](https://lite.datasette.io/?url=https://congress-legislators.datasettes.com/legislators.db) - the example database from the [Learn SQL with Datasette](https://datasette.io/tutorials/learn-sql) tutorial
 
+## Loading Parquet
+
+To load a Parquet file, pass a URL to `?parquet=`.
+
+For example this file:
+
+https://github.com/Teradata/kylo/blob/master/samples/sample-data/parquet/userdata1.parquet
+
+Can be loaded like this:
+
+https://lite.datasette.io/?parquet=https://github.com/Teradata/kylo/blob/master/samples/sample-data/parquet/userdata1.parquet
+
 ## Initializing with SQL
 
 You can also initialize the `data.db` database by passing the URL to a SQL file. The easiest way to do this is to create a [GitHub Gist](https://gist.github.com/).
@@ -90,6 +127,18 @@ This [example SQL file](https://gist.githubusercontent.com/simonw/ac4e19920b4b36
 You can paste this URL into the "Load SQL by URL" prompt, or you can pass it as the `?sql=` parameter [like this](https://lite.datasette.io/?sql=https%3A%2F%2Fgist.githubusercontent.com%2Fsimonw%2Fac4e19920b4b360752ac0f3ce85ba238%2Fraw%2F90d31cf93bf1d97bb496de78559798f849b17e85%2Fdemo.sql).
 
 SQL will be executed before any CSV imports, so you can use initial SQL to create a table and then use `?csv=` to import data into it.
+
+## Starting with just an in-memory database
+
+To skip loading the default databases and just provide `/_memory` - useful for demonstrating plugins - pass `?memory=1`, for example:
+
+https://lite.datasette.io/?memory=1
+
+## Loading metadata
+
+Datasette [supports metadata](https://docs.datasette.io/en/stable/metadata.html), as a `metadata.json` or `metadata.yml` file.
+
+You can load a metadata file in either of these formats by passing a URL to the `?metadata=` query string option.
 
 ## Special handling of GitHub URLs
 
@@ -127,3 +176,15 @@ Here's a list of plugins that have been tested with Datasette Lite, plus demo li
 - [datasette-copyable](https://datasette.io/plugins/datasette-copyable) - Datasette plugin for outputting tables in formats suitable for copy and paste - [demo](https://lite.datasette.io/?install=datasette-copyable#/fixtures/compound_three_primary_keys.copyable?_table_format=github)
 - [datasette-mp3-audio](https://datasette.io/plugins/datasette-mp3-audio) - Turn `.mp3` URLs into an audio player in the Datasette interface - [demo](https://lite.datasette.io/?install=datasette-mp3-audio&csv=https://gist.githubusercontent.com/simonw/0a30d52feeb3ff60f7d8636b0bde296b/raw/c078a9e5a0151331e2e46c04c1ebe7edc9f45e8c/scotrail-announcements.csv#/data/scotrail-announcements)
 - [datasette-multiline-links](https://datasette.io/plugins/datasette-multiline-links) - Make multiple newline separated URLs clickable in Datasette - [demo](https://lite.datasette.io/?install=datasette-multiline-links&csv=https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/export?format=csv#/data?sql=select+edition%2C+headline%2C+text%2C+links%2C+hattips+from+export+where%0Atext+like+'%25'+||+%3Aq+||+'%25'+or+headline+like+'%25'+||+%3Aq+||+'%25'+order+by+edition+desc&q=loans)
+
+## Analytics
+
+By default, hits to `https://lite.datasette.io/` are logged using [Plausible](https://plausible.io/).
+
+Plausible is a [privacy-focused](https://plausible.io/privacy-focused-web-analytics), cookie-free, GDPR-compliant analytics system.
+
+Each navigation within Datasette Lite is logged as a separate event to Plausible, capturing the fragment hash and the URL to the currently loaded file.
+
+The site is hosted on GitHub Pages, which does not offer any analytics that are visible to the site owner. GitHub Pages can only log visits to the `https://lite.datasette.io/` root page - it will not have visibility into any subsequent `#` fragment navigation.
+
+To opt out of analytics, you can add `?analytics=off` or `&analytics=off` to the URL. This will prevent any analytics being sent to Plausible.
