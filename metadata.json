@@ -1,1 +1,9 @@
-{"title": "GLAM Workbench Data Explorer"}
+{
+    "title": "GLAM Workbench Data Explorer",
+    "databases": {
+        "data": {
+            "title": "Datasets",
+            "tables": {}
+        }
+    }
+}

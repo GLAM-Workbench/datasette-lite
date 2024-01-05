@@ -5,7 +5,6 @@ from markupsafe import Markup, escape
 
 @hookimpl
 def render_cell(row, value):
-    print(row)
     if not isinstance(value, str):
         return
     output = []
