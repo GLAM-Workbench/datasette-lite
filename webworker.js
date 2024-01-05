@@ -39,9 +39,12 @@ async function startDatasette(settings) {
   await pyodide.loadPackage('micropip', {messageCallback: log});
   await pyodide.loadPackage('ssl', {messageCallback: log});
   await pyodide.loadPackage('setuptools', {messageCallback: log}); // For pkg_resources
-  let zipResponse = await fetch("templates.zip");
-  let zipBinary = await zipResponse.arrayBuffer();
-  pyodide.unpackArchive(zipBinary, "zip");
+  let templateResponse = await fetch("templates.zip");
+  let templateBinary = await templateResponse.arrayBuffer();
+  pyodide.unpackArchive(templateBinary, "zip");
+  let pluginResponse = await fetch("plugins.zip");
+  let pluginBinary = await pluginResponse.arrayBuffer();
+  pyodide.unpackArchive(pluginBinary, "zip");
   try {
     await self.pyodide.runPythonAsync(`
     # https://github.com/pyodide/pyodide/issues/3880#issuecomment-1560130092
@@ -82,7 +85,7 @@ async function startDatasette(settings) {
         "about": "Datasette Lite",
         "about_url": "https://github.com/simonw/datasette-lite"
     }
-    metadata_url = ${JSON.stringify(settings.metadataUrl || '')}
+    metadata_url = ${JSON.stringify(settings.metadataUrl || 'metadata.json')}
     if metadata_url:
         response = await pyfetch(metadata_url)
         content = await response.string()
@@ -155,10 +158,16 @@ async function startDatasette(settings) {
                         fp.write(await response.bytes())
                     df = fastparquet.ParquetFile("parquet.parquet").to_pandas()
                     df.to_sql(bit, db.conn, if_exists="replace")
+                fts_cols = ${JSON.stringify(settings.ftsCols)}
+                try:
+                    db[bit].enable_fts(fts_cols)
+                except sqlite3.OperationalError:
+                    print("Column not found")
+                    pass
     from datasette.app import Datasette
     ds = Datasette(names, settings={
         "num_sql_threads": 0, "truncate_cells_html": 100
-    }, metadata=metadata, template_dir="templates", memory=${settings.memory ? 'True' : 'False'})
+    }, metadata=metadata, template_dir="templates", plugins_dir="plugins", memory=${settings.memory ? 'True' : 'False'})
     await ds.invoke_startup()
     `);
     datasetteLiteReady();

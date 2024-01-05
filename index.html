@@ -119,8 +119,9 @@ const sqlUrls = urlParams.getAll('sql').map(fixUrl);
 const jsonUrls = urlParams.getAll('json').map(fixUrl);
 const parquetUrls = urlParams.getAll('parquet').map(fixUrl);
 const installUrls = urlParams.getAll('install');
+const ftsCols = urlParams.getAll('fts');
 
-datasetteWorker.postMessage({type: 'startup', initialUrl, memory, csvUrls, sqlUrls, jsonUrls, parquetUrls, installUrls, metadataUrl});
+datasetteWorker.postMessage({type: 'startup', initialUrl, memory, csvUrls, sqlUrls, jsonUrls, parquetUrls, installUrls, metadataUrl, ftsCols});
 
 let loadingLogs = ["Loading..."];
 
