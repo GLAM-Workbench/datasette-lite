@@ -15,5 +15,6 @@ def render_cell(row, value):
     if output:
         return Markup(" | ".join(output))
     else:
+        # Return None if no urls so that non-url cells will be truncated according to the truncate_cells_html setting
         return None
 

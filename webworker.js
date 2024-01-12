@@ -114,7 +114,6 @@ async function startDatasette(settings) {
                     bit = "{}_{}".format(base_bit, prefix)
                 table_names.add(bit)
                 metadata["databases"]["data"]["tables"][bit] = {"searchmode": "raw"}
-                print(metadata)
                 if source_type == "csv":
                     tracker = TypeTracker()
                     response = await pyfetch(url)
