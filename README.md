@@ -10,6 +10,19 @@ More about this project:
 - [Joining CSV files in your browser using Datasette Lite](https://simonwillison.net/2022/Jun/20/datasette-lite-csvs/)
 - [Plugin support for Datasette Lite](https://simonwillison.net/2022/Aug/17/datasette-lite-plugins/)
 
+## About the GLAM Workbench fork
+
+This repository is a fork of the original Datasette-Lite repository, customised to work with datasets created and shared through the [GLAM Workbench](https://glam-workbench.net/).
+
+The customisations include:
+
+- custom template
+- custom plugin to add links to fields containing multiple urls
+- `fts` parameter to specify columns for full text indexing, separate multiple columns with commas, eg: `fts=title,contributor`
+- `drop` parameter to specify columns that should be dropped from the SQLite db, separate multiple columns with commas, eg: `drop=publisher,url_type`
+
+See, for example, this [dataset of oral history metadata from Trove](https://glam-workbench.net/datasette-lite/?csv=https://github.com/GLAM-Workbench/trove-oral-histories-data/blob/main/trove-oral-histories.csv&fts=title,contributor,is_part_of&drop=publisher,work_type,fulltext_url_text).
+
 ## How this works
 
 Datasette Lite runs the full server-side Datasette Python web application directly in your browser, using the [Pyodide](https://pyodide.org) build of Python compiled to WebAssembly.
