@@ -25,6 +25,15 @@
 {% endblock %}
 
 {% block content %}
+{% set fk = sql("SELECT * FROM pragma_foreign_key_list(?)", [table]) %}
+{% if fk %}
+    {% set flinks = sql("select title, " + fk.0.to + " from " + fk.0.table + " where id = ?", [display_rows.0[fk.0.from]]) %}
+    {% set ftitle = flinks.0.title %}
+{% endif %}
+
+
+{{ ptitle}}
+
 <h1 class="title" style="padding-left: 10px; border-left: 10px solid #{{ database_color(database) }}">{{ table }}: {{ ', '.join(primary_key_values) }}</h1>
 
 {% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
@@ -35,7 +44,7 @@
 {% include "_vertical_table.html" %}
 
 {% if foreign_key_tables %}
-    <h2 class="title">Links from other tables</h2>
+    <h2 class="title is-4">Links from other tables</h2>
     <div class="content">
     <ul>
         {% for other in foreign_key_tables %}

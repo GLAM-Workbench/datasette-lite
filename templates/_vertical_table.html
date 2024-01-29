@@ -6,7 +6,13 @@
             {% for cell in row %}
             <tr>
                 <th>{{ cell.column }}</th>
-                <td class="col-{{ cell.column|to_css_class }}">{{ row.display(cell.column) }}</td>
+                <td class="col-{{ cell.column|to_css_class }}">
+                {% if fk and cell.column == fk.0.from %}
+                    <a href="/{{database}}/{{fk.0.table}}/{{cell.value}}">{{ftitle}}</a> <em>{{cell.value}}</em>
+                {% else %}
+                    {{ row.display(cell.column) }}
+                {% endif %}
+                </td>
             </tr>
             {% endfor %}
         {% endfor %}
