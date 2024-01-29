@@ -35,16 +35,18 @@
 {% include "_vertical_table.html" %}
 
 {% if foreign_key_tables %}
-    <h2>Links from other tables</h2>
+    <h2 class="title">Links from other tables</h2>
+    <div class="content">
     <ul>
         {% for other in foreign_key_tables %}
             <li>
                 <a href="{{ other.link }}">
                     {{ "{:,}".format(other.count) }} row{% if other.count == 1 %}{% else %}s{% endif %}</a>
-                from {{ other.other_column }} in {{ other.other_table }}
+                from <code>{{ other.other_column }}</code> in <code>{{ other.other_table }}</code>
             </li>
         {% endfor %}
     </ul>
+    </div>
 {% endif %}
 
 {% endblock %}
