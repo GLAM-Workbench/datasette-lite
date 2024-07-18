@@ -1,5 +1,5 @@
 {% if metadata.description_html or metadata.description %}
-    <div class="metadata-description">
+    <div class="metadata-description pl-4">
         {% if metadata.description_html %}
             {{ metadata.description_html|safe }}
         {% else %}
@@ -8,23 +8,23 @@
     </div>
 {% endif %}
 {% if metadata.license or metadata.license_url or metadata.source or metadata.source_url %}
-    <p>
+    <div class="metadata-block pl-4">
     {% if metadata.license or metadata.license_url %}Data license:
         {% if metadata.license_url %}
-            <a href="{{ metadata.license_url }}">{{ metadata.license or metadata.license_url }}</a>
+            <p><a href="{{ metadata.license_url }}">{{ metadata.license or metadata.license_url }}</a></p>
         {% else %}
-            {{ metadata.license }}
+            <p>{{ metadata.license }}</p>
         {% endif %}
     {% endif %}
     {% if metadata.source or metadata.source_url %}{% if metadata.license or metadata.license_url %}&middot;{% endif %}
-        Data source: {% if metadata.source_url %}
-            <a href="{{ metadata.source_url }}">
+        <p>>Data source: {% if metadata.source_url %}
+            <a href="{{ metadata.source_url }}"></p>
         {% endif %}{{ metadata.source or metadata.source_url }}{% if metadata.source_url %}</a>{% endif %}
     {% endif %}
     {% if metadata.about or metadata.about_url %}{% if metadata.license or metadata.license_url or metadata.source or metadata.source_url %}&middot;{% endif %}
-        About: {% if metadata.about_url %}
-            <a href="{{ metadata.about_url }}">
+        <p>About: {% if metadata.about_url %}
+            <a href="{{ metadata.about_url }}"></p>
         {% endif %}{{ metadata.about or metadata.about_url }}{% if metadata.about_url %}</a>{% endif %}
     {% endif %}
-    </p>
+    </div>
 {% endif %}

@@ -91,7 +91,6 @@ async function startDatasette(settings) {
         content = await response.string()
         from datasette.utils import parse_metadata
         metadata = parse_metadata(content)
-
     # Import data from ?csv=URL CSV files/?json=URL JSON files
     sources = ${JSON.stringify(sources.filter(source => ['csv', 'json', 'parquet'].includes(source[0])))}
     if sources:
@@ -113,7 +112,12 @@ async function startDatasette(settings) {
                     prefix += 1
                     bit = "{}_{}".format(base_bit, prefix)
                 table_names.add(bit)
-                metadata["databases"]["data"]["tables"][bit] = {"searchmode": "raw"}
+                metadata["databases"]["data"]["tables"][bit] = {"searchmode": "raw", "source_url": url}
+                metadata_plugins = metadata.get("plugins", {})
+                if not "datasette-homepage-table" in metadata_plugins:
+                  metadata_plugins["datasette-homepage-table"] = {"table": bit}
+                metadata["plugins"] = metadata_plugins
+                print(metadata)
                 if source_type == "csv":
                     tracker = TypeTracker()
                     response = await pyfetch(url)
@@ -159,14 +163,14 @@ async function startDatasette(settings) {
                     df = fastparquet.ParquetFile("parquet.parquet").to_pandas()
                     df.to_sql(bit, db.conn, if_exists="replace")
                 fts_cols = ${JSON.stringify(settings.ftsCols || "")}
-                try:
-                    db[bit].enable_fts(fts_cols.split(","))
-                except sqlite3.OperationalError:
+                for fts_col in fts_cols.split(","):
+                  try:
+                    db[bit].enable_fts([fts_col.strip()])
+                  except sqlite3.OperationalError:
                     print("Column not found")
                     pass
                 drop_cols = ${JSON.stringify(settings.dropCols || "")}
-                print(drop_cols)
-                db[bit].transform(drop=set(drop_cols.split(",")))
+                db[bit].transform(drop=set([d.strip() for d in drop_cols.split(",")]))
     from datasette.app import Datasette
     ds = Datasette(names, settings={
         "num_sql_threads": 0, "truncate_cells_html": 100
