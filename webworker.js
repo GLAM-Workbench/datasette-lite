@@ -91,6 +91,8 @@ async function startDatasette(settings) {
         content = await response.string()
         from datasette.utils import parse_metadata
         metadata = parse_metadata(content)
+    about_url = ${JSON.stringify(settings.aboutUrl || "")}
+    print(about_url)
     # Import data from ?csv=URL CSV files/?json=URL JSON files
     sources = ${JSON.stringify(sources.filter(source => ['csv', 'json', 'parquet'].includes(source[0])))}
     if sources:
@@ -112,7 +114,7 @@ async function startDatasette(settings) {
                     prefix += 1
                     bit = "{}_{}".format(base_bit, prefix)
                 table_names.add(bit)
-                metadata["databases"]["data"]["tables"][bit] = {"searchmode": "raw", "source_url": url}
+                metadata["databases"]["data"]["tables"][bit] = {"searchmode": "raw", "source_url": url, "about_url": about_url}
                 metadata_plugins = metadata.get("plugins", {})
                 if not "datasette-homepage-table" in metadata_plugins:
                   metadata_plugins["datasette-homepage-table"] = {"table": bit}

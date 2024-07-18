@@ -32,7 +32,7 @@
 
 {% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
 
-<h3 class="subtitle pl-4">Custom SQL query{% if display_rows %} returning {% if truncated %}more than {% endif %}{{ "{:,}".format(display_rows|length) }} row{% if display_rows|length == 1 %}{% else %}s{% endif %}{% endif %}{% if not query_error %}
+<h3 class="subtitle mt-4 mb-6">Custom SQL query{% if display_rows %} returning {% if truncated %}more than {% endif %}{{ "{:,}".format(display_rows|length) }} row{% if display_rows|length == 1 %}{% else %}s{% endif %}{% endif %}{% if not query_error %}
         <span class="show-hide-sql">(<a href="{{ show_hide_link }}">{{ show_hide_text }}</a>)</span>
     {% endif %}</h3>
 

@@ -26,7 +26,7 @@
 
 {% block content %}
 <div class="page-header" style="border-color: #{{ database_color(database) }}">
-    <h1 class="title" style="padding-left: 0.5rem; border-left: 0.5rem solid #{{ database_color(database) }}">{{ metadata.title or table }}{% if is_view %} (view){% endif %}{% if private %} 🔒{% endif %}</h1>
+    <h1 class="title is-1" style="padding-left: 0.5rem; border-left: 0.5rem solid #{{ database_color(database) }}">{{ metadata.title or table }}{% if is_view %} (view){% endif %}{% if private %} 🔒{% endif %}</h1>
     {% set links = table_actions() %}{% if links %}
     <details class="actions-menu-links">
         <summary><svg aria-labelledby="actions-menu-links-title" role="img"
@@ -60,12 +60,12 @@
 {% endif %}
 
 {% if filtered_table_rows_count or human_description_en %}
-    <h3 class="subtitle mt-4 mb-6">{% if filtered_table_rows_count or filtered_table_rows_count == 0 %}{{ "{:,}".format(filtered_table_rows_count) }} row{% if filtered_table_rows_count == 1 %}{% else %}s{% endif %}{% endif %}
+    <h2 class="subtitle mt-4 mb-2 is-3">{% if filtered_table_rows_count or filtered_table_rows_count == 0 %}{{ "{:,}".format(filtered_table_rows_count) }} row{% if filtered_table_rows_count == 1 %}{% else %}s{% endif %}{% endif %}
         {% if human_description_en %}{{ human_description_en }}{% endif %}
-    </h3>
+    </h2>
 {% endif %}
 
-<h3 class="title is-5 mb-2">Filter results</h3>
+<h3 class="title is-5 mt-2 mb-2 has-text-weight-medium">Filter results</h3>
 
 <div class="columns mb-4">
 <div class="column is-half">
@@ -167,24 +167,20 @@
 </div>
 {% endif %}
 
-{% if query.sql and allow_execute_sql %}
-    <p class="block is-size-7 mb-4"><a class="not-underlined" title="{{ query.sql }}" href="{{ urls.database(database) }}?{{ {'sql': query.sql}|urlencode|safe }}{% if query.params %}&amp;{{ query.params|urlencode|safe }}{% endif %}">&#x270e; <span class="underlined">View and edit SQL</span></a></p>
-{% endif %}
-
-<p class="export-links block is-size-7 mb-4">This data as {% for name, url in renderers.items() %}<a href="{{ url }}">{{ name }}</a>{{ ", " if not loop.last }}{% endfor %}{% if display_rows %}, <a href="{{ url_csv }}">CSV</a> (<a href="#export">advanced</a>){% endif %}</p>
+<p class="export-links block is-size-6 mb-4">This data as {% for name, url in renderers.items() %}<a href="{{ url }}">{{ name }}</a>{{ ", " if not loop.last }}{% endfor %}{% if display_rows %}, <a href="{{ url_csv }}">CSV</a> (<a href="#export">advanced</a>){% endif %}</p>
 
 {% if suggested_facets %}
-    <p class="suggested-facets block is-size-7 mb-4">
+    <p class="suggested-facets block is-size-6 mb-4">
         Suggested facets: {% for facet in suggested_facets %}<a href="{{ facet.toggle_url }}#facet-{{ facet.name|to_css_class }}">{{ facet.name }}</a>{% if facet.type %} ({{ facet.type }}){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
     </p>
 {% endif %}
 
 {% if facets_timed_out %}
-    <p class="facets-timed-out is-size-7 mb-4">These facets timed out: {{ ", ".join(facets_timed_out) }}</p>
+    <p class="facets-timed-out is-size-6 mb-4">These facets timed out: {{ ", ".join(facets_timed_out) }}</p>
 {% endif %}
 
 {% if facet_results %}
-    <div class="facet-results is-size-7 mb-4">
+    <div class="facet-results is-size-6 mb-4 content">
         {% for facet_info in sorted_facet_results %}
             <div class="facet-info facet-{{ database|to_css_class }}-{{ table|to_css_class }}-{{ facet_info.name|to_css_class }}" id="facet-{{ facet_info.name|to_css_class }}" data-column="{{ facet_info.name }}">
                 <p class="facet-info-name">

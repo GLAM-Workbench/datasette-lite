@@ -121,8 +121,9 @@ const parquetUrls = urlParams.getAll('parquet').map(fixUrl);
 const installUrls = urlParams.getAll('install');
 const ftsCols = urlParams.get('fts');
 const dropCols = urlParams.get('drop');
+const aboutUrl = urlParams.get('about');
 
-datasetteWorker.postMessage({type: 'startup', initialUrl, memory, csvUrls, sqlUrls, jsonUrls, parquetUrls, installUrls, metadataUrl, ftsCols, dropCols});
+datasetteWorker.postMessage({type: 'startup', initialUrl, memory, csvUrls, sqlUrls, jsonUrls, parquetUrls, installUrls, metadataUrl, ftsCols, dropCols, aboutUrl});
 
 let loadingLogs = ["Loading..."];
 
