@@ -67,6 +67,7 @@ async function startDatasette(settings) {
     # Workaround for Requested 'h11<0.13,>=0.11', but h11==0.13.0 is already installed
     await micropip.install("h11==0.12.0")
     await micropip.install("httpx==0.23")
+    await micropip.install("python-multipart==0.0.15")
     await micropip.install("datasette")
     # Install any extra ?install= dependencies
     install_urls = ${JSON.stringify(settings.installUrls)}
