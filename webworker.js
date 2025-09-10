@@ -166,12 +166,11 @@ async function startDatasette(settings) {
                     df.to_sql(bit, db.conn, if_exists="replace")
                 fts_cols = ${JSON.stringify(settings.ftsCols || "")}
                 if fts_cols:
-                  for fts_col in fts_cols.split(","):
                     try:
-                      db[bit].enable_fts([fts_col.strip()])
+                        db[bit].enable_fts([f.strip() for f in fts_cols.split(",")])
                     except sqlite3.OperationalError:
-                      print("Column not found")
-                      pass
+                        print(f"{fts_cols}: Column not found")
+                        pass
                 drop_cols = ${JSON.stringify(settings.dropCols || "")}
                 if drop_cols:
                   db[bit].transform(drop=set([d.strip() for d in drop_cols.split(",")]))
